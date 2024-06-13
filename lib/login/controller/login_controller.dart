@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:io';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -11,7 +12,7 @@ import 'package:http/http.dart' as http;
 import 'package:summail/login/google_login/google_login.dart';
 
 import '../../utils/api_points.dart';
-import '../google_login/registeration_mail.dart';
+import '../google_login/addMail.dart';
 
 
 class LoginController extends GetxController {
@@ -21,25 +22,28 @@ class LoginController extends GetxController {
   final Future<SharedPreferences> prefs = SharedPreferences.getInstance();
 
 
-  Future<void> callAnotherServer(String token) async {
-    try {
-      var headers = {
-        'Content-Type': 'application/json',
-        'Authorization': token, // Bearer 토큰이 필요한 경우 'Bearer $token'으로 수정
-      };
-      var url = Uri.parse('http://ec2-43-200-104-174.ap-northeast-2.compute.amazonaws.com/user/info'); // 호출하고자 하는 서버의 URL로 대체
 
-      http.Response response = await http.get(url, headers: headers);
+  /*Future<void> callAnotherServer(String token) async {
+    try {
+      final response = await http.get(
+        Uri.parse(
+            'http://ec2-13-125-246-135.ap-northeast-2.compute.amazonaws.com:8080/add/google'),
+        headers: {
+          'Authorization': 'Bearer $token',
+        },
+      );
 
       if (response.statusCode == 200) {
         print("다른 서버 호출 성공: 상태 코드 ${response.statusCode}");
       } else {
         print("다른 서버 호출 실패: 상태 코드 ${response.statusCode}");
       }
-    } catch (e) {
+    }
+    catch (e) {
       print("다른 서버 호출 중 예외 발생: $e");
     }
-  }
+  }*/
+
 
   Future<void> loginWithEmail() async {
     print("로그인 시작"); // 시작 로그
@@ -59,7 +63,6 @@ class LoginController extends GetxController {
       if (response.statusCode == 200) {
         // 서버로부터의 응답 헤더에서 토큰 추출
         String? token = response.headers['authorization'];
-        //var token = response.headers['Authorization'];
         print("응답에서 토큰 추출: $token"); // 토큰 추출 로그
 
         if (token != null) {
@@ -69,13 +72,14 @@ class LoginController extends GetxController {
           await prefs.setString('token', token); // 기기 내부에 String 타입의 token이 'token'이라는 이름에 저장됨.
           print("토큰 저장 완료"); // 토큰 저장 로그
 
+
+          Get.to(() => AddMail());
+
           // map 서버 호출해주기
-          await callAnotherServer(token);
+          //await callAnotherServer(token);
 
           emailController.clear();
           passwordController.clear();
-          //Get.to(() => HomeScreen());
-          Get.to(() => RegisterationMail);
         } else {
           print("응답 헤더에서 토큰을 찾을 수 없음"); // 토큰 없음 로그
           throw "Token not found in response headers";

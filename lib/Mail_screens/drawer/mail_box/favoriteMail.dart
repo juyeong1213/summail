@@ -21,7 +21,7 @@ class LikedMailPage extends StatelessWidget {
           final mail = favoriteController.favorites[index];
           return ListTile(
             leading: Icon(Icons.mail),
-            title: Text(mail.mailFrom),
+            title: Text(mail.email),
             trailing: IconButton(
               icon: Icon(
                 mail.isFavorited ? Icons.star : Icons.star_border,
@@ -67,8 +67,8 @@ class LikedMailPage extends StatelessWidget {
         itemBuilder: (context, index) {
           final mail = favoriteController.favorites[index];
           return ListTile(
-            title: Text(mail.mailFrom),
-            subtitle: Text(mail.mailFrom),
+            title: Text(mail.email),
+            subtitle: Text(mail.email),
             trailing: IconButton(
               icon: Icon(Icons.favorite, color: Colors.red),
               onPressed: () => favoriteController.toggleFavorite(mail),

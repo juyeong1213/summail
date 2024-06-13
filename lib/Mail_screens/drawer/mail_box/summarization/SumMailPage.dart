@@ -2,21 +2,20 @@
 import 'package:flutter/material.dart';
 import 'package:summail/Mail_screens/send_Mail/send_Mail.dart';
 
-import '../drawer/drawer.dart';
-import '../model/mail.dart';
-import '../model/service.dart';
-import '../model/star/favoriteService.dart';
-import 'mailDetailPage.dart';
+import '../../../main_mail/mailDetailPage.dart';
+import '../../../model/mail.dart';
+import '../../../model/service.dart';
+import '../../../model/star/favoriteService.dart';
+import 'SumMailDetailPage.dart';
 
-
-class JsonParse extends StatefulWidget {
-  const JsonParse({super.key});
+class SumMailPage extends StatefulWidget {
+  const SumMailPage({super.key});
 
   @override
-  State<JsonParse> createState() => _JsonParseState();
+  State<SumMailPage> createState() => _SumMailPageState();
 }
 
-class _JsonParseState extends State<JsonParse> {
+class _SumMailPageState extends State<SumMailPage> {
   List<Mail> _mail = <Mail>[];
   bool loading = false;
 
@@ -55,7 +54,6 @@ class _JsonParseState extends State<JsonParse> {
       appBar: AppBar(
         title: Text(loading ? '썸메일' : 'Loading...'),
       ),
-      drawer: const CustomDrawer(),
       body: ListView.builder(
         itemCount: _mail.length,
         itemBuilder: (context, index) {
@@ -132,8 +130,6 @@ class _JsonParseState extends State<JsonParse> {
                         iconColor = snapshot.data! ? Colors.yellow : Colors.grey;
                       }
                     }
-                    // Future의 상태와 관계없이 아이콘을 표시합니다.
-                    // 데이터 로딩 중이거나 오류가 발생한 경우에도 기본값인 회색 아이콘을 표시합니다.
                     return Icon(
                       Icons.star,
                       color: iconColor,
@@ -146,24 +142,12 @@ class _JsonParseState extends State<JsonParse> {
             onTap: () {
               Navigator.push(
                 context,
-                MaterialPageRoute(builder: (context) => MailDetailPage(mail: mail)),
+                MaterialPageRoute(builder: (context) => SumMailDetailPage(mail: mail)),
               );
             },
           );
         },
       ),
-      floatingActionButton: Container(
-        margin: EdgeInsets.only(bottom: 30, right: 30),
-        child: FloatingActionButton(
-          onPressed: () {
-            // 메일 작성 페이지로 이동하는 로직
-            navigateToPage(context, SendMail()); // 예시 페이지
-          },
-          child: Icon(Icons.add),
-          backgroundColor: Colors.white54,
-        ),
-      ),
     );
   }
 }
-

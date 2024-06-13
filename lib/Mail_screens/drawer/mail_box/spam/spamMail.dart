@@ -1,22 +1,21 @@
 
 import 'package:flutter/material.dart';
+import 'package:summail/Mail_screens/drawer/mail_box/spam/spamMailDetailPage.dart';
+import 'package:summail/Mail_screens/drawer/mail_box/summarization/service.dart';
 import 'package:summail/Mail_screens/send_Mail/send_Mail.dart';
 
-import '../drawer/drawer.dart';
-import '../model/mail.dart';
-import '../model/service.dart';
-import '../model/star/favoriteService.dart';
-import 'mailDetailPage.dart';
+import '../../../model/mail.dart';
 
 
-class JsonParse extends StatefulWidget {
-  const JsonParse({super.key});
+
+class SpamMailPage extends StatefulWidget {
+  const SpamMailPage({super.key});
 
   @override
-  State<JsonParse> createState() => _JsonParseState();
+  State<SpamMailPage> createState() => _SpamMailPageState();
 }
 
-class _JsonParseState extends State<JsonParse> {
+class _SpamMailPageState extends State<SpamMailPage> {
   List<Mail> _mail = <Mail>[];
   bool loading = false;
 
@@ -30,32 +29,19 @@ class _JsonParseState extends State<JsonParse> {
     super.initState();
     Services.getInfo().then((mail) {
       setState(() {
-        print('메일 데이터 로드 완료');
         _mail = mail;
         loading = true;
       });
     });
   }
 
-  Future<void> toggleFavoriteStatus(int mailId) async {
-    bool currentStatus = await FavoriteService.getFavoriteStatus(mailId); // 비동기 호출에 await 추가
-    bool newStatus = !currentStatus;
-    await FavoriteService.toggleFavoriteStatus(mailId, newStatus); // 비동기 호출에 await 추가
-    setState(() {
-      // UI 갱신 로직이 필요한 경우 여기에 추가
-    });
-  }
-
-
 
   @override
   Widget build(BuildContext context) {
-    print('build 호출됨');
     return Scaffold(
       appBar: AppBar(
-        title: Text(loading ? '썸메일' : 'Loading...'),
+        title: Text(loading ? '스펨 메일함' : 'Loading...'),
       ),
-      drawer: const CustomDrawer(),
       body: ListView.builder(
         itemCount: _mail.length,
         itemBuilder: (context, index) {
@@ -118,50 +104,15 @@ class _JsonParseState extends State<JsonParse> {
                 ),
               ],
             ),
-            trailing: InkWell(
-              onTap: () => toggleFavoriteStatus(mail.id),
-              child: Padding(
-                padding: const EdgeInsets.all(8.0),
-                child: FutureBuilder<bool>(
-                  future: FavoriteService.getFavoriteStatus(mail.id), // 비동기 메서드 호출
-                  builder: (BuildContext context, AsyncSnapshot<bool> snapshot) {
-                    Color iconColor = Colors.grey; // 기본 색상은 회색
-                    if (snapshot.connectionState == ConnectionState.done) {
-                      if (snapshot.hasData) {
-                        // Future에서 데이터를 성공적으로 받아왔다면, 해당 데이터에 따라 색상 결정
-                        iconColor = snapshot.data! ? Colors.yellow : Colors.grey;
-                      }
-                    }
-                    // Future의 상태와 관계없이 아이콘을 표시합니다.
-                    // 데이터 로딩 중이거나 오류가 발생한 경우에도 기본값인 회색 아이콘을 표시합니다.
-                    return Icon(
-                      Icons.star,
-                      color: iconColor,
-                    );
-                  },
-                ),
-              ),
-            ),
 
             onTap: () {
               Navigator.push(
                 context,
-                MaterialPageRoute(builder: (context) => MailDetailPage(mail: mail)),
+                MaterialPageRoute(builder: (context) => SpamMailDetailPage(mail: mail)),
               );
             },
           );
         },
-      ),
-      floatingActionButton: Container(
-        margin: EdgeInsets.only(bottom: 30, right: 30),
-        child: FloatingActionButton(
-          onPressed: () {
-            // 메일 작성 페이지로 이동하는 로직
-            navigateToPage(context, SendMail()); // 예시 페이지
-          },
-          child: Icon(Icons.add),
-          backgroundColor: Colors.white54,
-        ),
       ),
     );
   }

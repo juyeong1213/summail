@@ -11,8 +11,10 @@ String mailToJson(List<Mail> data) => json.encode(List<dynamic>.from(data.map((x
 class Mail {
   final int id;
   final String messageId;
-  final String mailFrom;
+  final String name;
+  final String email;
   final String subject;
+  final String receiveDate;
   final String receiveTime;
   final String contents;
   bool isFavorited;
@@ -20,170 +22,46 @@ class Mail {
   Mail({
     required this.id,
     required this.messageId,
-    required this.mailFrom,
+    required this.name,
+    required this.email,
     required this.subject,
-    required this.receiveTime,
+    required this.receiveDate, // 생성자에서 날짜를 받음
+    required this.receiveTime, // 생성자에서 시간을 받음
     required this.contents,
     this.isFavorited = false,
   });
 
-  // JSON 맵에서 Mail 객체로 변환하기 위한 팩토리 생성자
-  factory Mail.fromJson(Map<String, dynamic> json) => Mail(
-    id: json["id"],
-    messageId: json["messageId"],
-    mailFrom: json["mailFrom"],
-    subject: json["subject"],
-    receiveTime: json["receiveTime"],
-    contents: json["contents"],
-  );
+  factory Mail.fromJson(Map<String, dynamic> json) {
+    // 'mailFrom'을 공백 기준으로 분리하여 'name'과 'email' 추출
+    var parts = json["mailFrom"].split(RegExp(r"\s+"));
+    String name = parts.length > 1 ? parts[0] : ""; // 첫 부분을 이름으로 설정
+    String email = parts.length > 1 ? parts.sublist(1).join(" ") : parts.join(" "); // 나머지 부분을 이메일로 설정
 
-  @override
-  bool operator ==(Object other) =>
-      identical(this, other) || (other is Mail && runtimeType == other.runtimeType && id == other.id);
+    // "receiveTime": "Fri, 05 Apr 2024 10:10:01 GMT" 형식의 문자열을 처리
+    var dateTimeParts = json["receiveTime"].split(" ");
+    String date = dateTimeParts.sublist(0, 4).join(" "); // 날짜 부분
+    String time = dateTimeParts[4]; // 시간 부분
 
+    return Mail(
+      id: json["id"],
+      messageId: json["messageId"],
+      name: name,
+      email: email,
+      subject: json["subject"],
+      receiveDate: date,
+      receiveTime: time,
+      contents: json["contents"],
+    );
+  }
 
-  // Mail 객체를 JSON 맵으로 변환하기 위한 메서드
   Map<String, dynamic> toJson() => {
     "id": id,
     "messageId": messageId,
-    "mailFrom": mailFrom,
+    "mailFrom": "$name $email",
     "subject": subject,
+    "receiveDate": receiveDate,
     "receiveTime": receiveTime,
     "contents": contents,
   };
 }
 
-
-
-
-
-/*
-import 'dart:convert';
-
-List<User> userFromJson(String str) => List<User>.from(json.decode(str).map((x) => User.fromJson(x)));
-
-String userToJson(List<User> data) => json.encode(List<dynamic>.from(data.map((x) => x.toJson())));
-
-class User {
-  int id;
-  String name;
-  String username;
-  String email;
-  Address address;
-  String phone;
-  String website;
-  Company company;
-  bool isFavorited;
-
-  User({
-    required this.id,
-    required this.name,
-    required this.username,
-    required this.email,
-    required this.address,
-    required this.phone,
-    required this.website,
-    required this.company,
-    this.isFavorited = false,
-  });
-
-  factory User.fromJson(Map<String, dynamic> json) => User(
-    id: json["id"],
-    name: json["name"],
-    username: json["username"],
-    email: json["email"],
-    address: Address.fromJson(json["address"]),
-    phone: json["phone"],
-    website: json["website"],
-    company: Company.fromJson(json["company"]),
-  );
-
-  @override
-  bool operator ==(Object other) =>
-      identical(this, other) || (other is User && runtimeType == other.runtimeType && id == other.id);
-
-  @override
-  int get hashCode => id.hashCode;
-
-  Map<String, dynamic> toJson() => {
-    "id": id,
-    "name": name,
-    "username": username,
-    "email": email,
-    "address": address.toJson(),
-    "phone": phone,
-    "website": website,
-    "company": company.toJson(),
-  };
-}
-
-class Address {
-  String street;
-  String suite;
-  String city;
-  String zipcode;
-
-  Address({
-    required this.street,
-    required this.suite,
-    required this.city,
-    required this.zipcode,
-  });
-
-  factory Address.fromJson(Map<String, dynamic> json) => Address(
-    street: json["street"],
-    suite: json["suite"],
-    city: json["city"],
-    zipcode: json["zipcode"],
-  );
-
-  Map<String, dynamic> toJson() => {
-    "street": street,
-    "suite": suite,
-    "city": city,
-    "zipcode": zipcode,
-  };
-}
-
-
-class Company {
-  String name;
-  String catchPhrase;
-  String bs;
-
-  Company({
-    required this.name,
-    required this.catchPhrase,
-    required this.bs,
-  });
-
-  factory Company.fromJson(Map<String, dynamic> json) => Company(
-    name: json["name"],
-    catchPhrase: json["catchPhrase"],
-    bs: json["bs"],
-  );
-
-  Map<String, dynamic> toJson() => {
-    "name": name,
-    "catchPhrase": catchPhrase,
-    "bs": bs,
-  };
-}
-
-class Mail {
-  final String id;
-  final String title;
-  final String content;
-
-  Mail({required this.id, required this.title, required this.content});
-
-  factory Mail.fromJson(Map<String, dynamic> json) {
-    return Mail(
-      id: json['id'] as String,
-      title: json['title'] as String,
-      content: json['content'] as String,
-    );
-  }
-}
-
-*/

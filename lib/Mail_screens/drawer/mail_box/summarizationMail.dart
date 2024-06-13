@@ -1,3 +1,4 @@
+/*
 import 'package:flutter/material.dart';
 
 import 'package:flutter/material.dart';
@@ -61,27 +62,4 @@ class _SumMailPageState extends State<SumMailPage> {
   }
 }
 
-
-
-/*
-class SumMailPage extends StatefulWidget {
-  const SumMailPage({super.key});
-
-  @override
-  State<SumMailPage> createState() => _SumMailPageState();
-}
-
-class _SumMailPageState extends State<SumMailPage> {
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: Text('요약 메일함'),
-      ),
-      body: Center(
-        child: Text('요약 메일함 페이지'),
-      ),
-    );
-  }
-}
 */

@@ -58,13 +58,13 @@ class _ReciveMailPageState extends State<ReciveMailPage> {
                   context: context,
                   builder: (context) {
                     return AlertDialog(
-                      title: Text(mail.mailFrom),
+                      title: Text(mail.email),
                       content: Column(
                         mainAxisSize: MainAxisSize.min,
                         children: [
-                          Text("보낸 사람 : ${mail.mailFrom}"),
-                          Text("받는 사람 : ${mail.mailFrom}"),
-                          Text("날짜 : ${mail.mailFrom}"),
+                          Text("보낸 사람 : ${mail.email}"),
+                          Text("받는 사람 : ${mail.email}"),
+                          Text("날짜 : ${mail.email}"),
                           TextButton(
                             onPressed: () {
                               Navigator.pop(context); // 대화 상자를 닫습니다.
@@ -83,14 +83,14 @@ class _ReciveMailPageState extends State<ReciveMailPage> {
               ),
             ),
 
-            title: Text(mail.mailFrom),
+            title: Text(mail.email),
             //subtitle: Text(mail.address.street),
             subtitle: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: <Widget>[
-                Text(mail.mailFrom),
-                Text(mail.mailFrom),
-                Text(mail.mailFrom),
+                Text(mail.email),
+                Text(mail.email),
+                Text(mail.email),
               ],
             ),
             trailing: InkWell(

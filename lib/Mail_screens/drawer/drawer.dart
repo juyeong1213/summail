@@ -1,11 +1,16 @@
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
+import 'package:get/get_core/src/get_main.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
+import '../../login/google_login/addMail.dart';
+import '../../login/google_login/webview.dart';
 import 'mail_box/favoriteMail.dart';
 import 'mail_box/receivedMail.dart';
 import 'mail_box/sendMail.dart';
 import 'mail_box/settings.dart';
 import 'mail_box/spamMail.dart';
+import 'mail_box/summarization/SumMailPage.dart';
 import 'mail_box/summarizationMail.dart';
 
 class CustomDrawer extends StatefulWidget {
@@ -17,11 +22,6 @@ class CustomDrawer extends StatefulWidget {
 
 
 class _CustomDrawerState extends State<CustomDrawer> {
-  // navigateToPage 메서드를 _drawerState 클래스 내부에 추가
-  void navigateToPage(BuildContext context, Widget page) {
-    Navigator.pop(context);
-    Navigator.push(context, MaterialPageRoute(builder: (context) => page));
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -58,27 +58,67 @@ class _CustomDrawerState extends State<CustomDrawer> {
                 );
               }
             },
-          ),
-          /*children: [
-          UserAccountsDrawerHeader(
+
+/*      future: SharedPreferences.getInstance(),
+      builder: (context, snapshot) {
+        if (snapshot.connectionState == ConnectionState.done && snapshot.hasData) {
+          // SharedPreferences 데이터 로드 완료
+          final prefs = snapshot.data!;
+          final name = prefs.getString('name') ?? '이름 없음'; // 기본값 설정
+          final email = prefs.getString('email') ?? '이메일 없음'; // 기본값 설정
+          *//*final emailList = prefs.getStringList('addmail') ?? [];
+          final firstEmail = emailList.isNotEmpty ? emailList[0] : '이메일 없음';
+          final secondEmail = emailList.length > 1 ? emailList[1] : '두 번째 이메일 없음';*//*
+
+          return UserAccountsDrawerHeader(
             currentAccountPicture: CircleAvatar(
-              backgroundImage: AssetImage('images/ku.png'),
+              backgroundImage: AssetImage('assets/ku.png'),
             ),
             otherAccountsPictures: [
-              CircleAvatar(
-                backgroundImage: AssetImage('assets/ku.png'),
+              GestureDetector(
+                onTap: () {
+                  showDialog(
+                    context: context,
+                    builder: (BuildContext context) {
+                      return AlertDialog(
+                        title: Text('추가 계정'),
+                        content: Text('$name\n$email'),
+                        actions: [
+                          TextButton(
+                            child: Text('확인'),
+                            onPressed: () {
+                              Navigator.of(context).pop();
+                            },
+                          ),
+                        ],
+                      );
+                    },
+                  );
+                },
+                child: CircleAvatar(
+                  backgroundImage: AssetImage('assets/kun.png'),
+                ),
               )
             ],
-            accountName: Text('정주영'),
-            accountEmail: Text('dkfl@naver.com'),
-          ),*/
+            accountName: Text(name),
+            accountEmail: Text(email),
+          );
+        } else {
+          // 데이터 로딩 중이거나 에러 발생 시
+          return UserAccountsDrawerHeader(
+            accountName: Text('로딩 중...'),
+            accountEmail: Text(''),
+          );
+        }
+      },*/
+          ),
           ListTile(
             leading: Icon(Icons.send,
               color: Colors.grey[850],
             ),
             title: Text('보낸 메일함'),
             onTap: (){
-              navigateToPage(context, SendMailPage());
+              Get.to(() => SendMailPage());
             },
           ),
           ListTile(
@@ -87,7 +127,7 @@ class _CustomDrawerState extends State<CustomDrawer> {
             ),
             title: Text('받은 메일함'),
             onTap: (){
-              navigateToPage(context, ReciveMailPage());
+              Get.to(() => ReciveMailPage());
             },
           ),
           ListTile(
@@ -96,7 +136,7 @@ class _CustomDrawerState extends State<CustomDrawer> {
             ),
             title: Text('중요 메일함'),
             onTap: (){
-              navigateToPage(context, LikedMailPage());
+              Get.to(() => LikedMailPage());
             },
           ),
           ListTile(
@@ -105,7 +145,7 @@ class _CustomDrawerState extends State<CustomDrawer> {
             ),
             title: Text('요약 메일함'),
             onTap: (){
-              navigateToPage(context, SumMailPage());
+              Get.to(() => SumMailPage());
             },
           ),
           ListTile(
@@ -114,16 +154,28 @@ class _CustomDrawerState extends State<CustomDrawer> {
             ),
             title: Text('스팸 메일함'),
             onTap: (){
-              navigateToPage(context, SpamMailPage());
+              Get.to(() => SpamMailPage());
             },
           ),
+
           ListTile(
             leading: Icon(Icons.settings,
               color: Colors.grey[850],
             ),
             title: Text('설정'),
             onTap: (){
-              navigateToPage(context, SettingsPage());
+              Get.to(() => SettingsPage());
+            },
+          ),
+          Divider(), // 구분선 추가
+          ListTile(
+            leading: Icon(
+              Icons.add,
+              color: Colors.grey[850],
+            ),
+            title: Text('메일 추가'),
+            onTap: () {
+              Get.to(() => AddMail());
             },
           ),
         ],

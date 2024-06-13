@@ -1,5 +1,5 @@
 class ApiEndPoints {
-  static const String baseUrl = 'http://ec2-43-200-104-174.ap-northeast-2.compute.amazonaws.com:8080'; // 혹은 'https://'
+  static const String baseUrl = 'http://ec2-13-125-246-135.ap-northeast-2.compute.amazonaws.com'; // 혹은 'https://'
 
   static final _AuthEndPoints authEndPoints = _AuthEndPoints();
 }

@@ -2,19 +2,21 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
-import '../model/mail.dart';
+import '../../../model/mail.dart';
 
-class MailDetailPage extends StatelessWidget {
+
+class SpamMailDetailPage extends StatelessWidget {
   final Mail mail;
 
-  const MailDetailPage({Key? key, required this.mail}) : super(key: key);
+  const SpamMailDetailPage({Key? key, required this.mail}) : super(key: key);
 
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        //title: Text(mail.email), // 일단 이름 불러옴
+        title: Text("${mail.name}의 메일 요약",
+            style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold)), // 일단 이름 불러옴
       ),
       body: Padding(
         padding: EdgeInsets.all(16.0),
@@ -22,7 +24,7 @@ class MailDetailPage extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: <Widget>[
             // 사용자의 이름을 큰 글씨로 표시 -> 메일의 제목으로 바꿔야함.
-            Text(mail.subject, style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold)),
+            Text(mail.name, style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold)),
             SizedBox(height: 16),
             // 사용자의 프로필 아이콘과 이메일을 Row로 나란히 표시
             Row(
@@ -40,7 +42,7 @@ class MailDetailPage extends StatelessWidget {
                             children: [
                               Text("보낸 사람 : ${mail.email}"),
                               Text("받는 사람 : ${mail.email}"), // 실제로는 다른 데이터를 사용할 것
-                              Text("날짜 : ${mail.email}"), // 날짜 형식으로 변경해야 할 수도 있음
+                              Text("날짜 : ${mail.receiveDate} ${mail.receiveTime}"), // 날짜 형식으로 변경해야 할 수도 있음
                               TextButton(
                                 onPressed: () {
                                   Navigator.pop(context); // 대화 상자를 닫습니다.
@@ -79,9 +81,9 @@ class MailDetailPage extends StatelessWidget {
                     Row(
                       children: [
                         Text("받는 사람: 나 ${mail.email}"),
-
                         //Text(mail.email, style: TextStyle(fontSize: 18, color: Colors.grey)),
                         SizedBox(width: 8,),
+
                       ],
                     ),
                   ],
@@ -90,7 +92,7 @@ class MailDetailPage extends StatelessWidget {
             ),
             SizedBox(height: 16),
             // 사용자의 주소를 표시
-            Text("내용: ${mail.contents}", style: TextStyle(fontSize: 20), ),
+            Text("내용: ${mail.contents}", style: TextStyle(fontSize: 20)),
           ],
         ),
       ),

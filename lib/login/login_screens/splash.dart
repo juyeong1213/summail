@@ -3,7 +3,6 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:summail/login/login_screens/auth/auth_screens.dart';
 
 import '../../Mail_screens/main_mail/json_parse.dart';
-import '../../ex/json_parse.dart';
 
 
 class Splash extends StatefulWidget {
