@@ -17,7 +17,7 @@ class _SendMailPageState extends State<SendMailPage> {
         title: Text('보낸 메일함'),
       ),
       body: Center(
-        child: Text('보낸 메일함 페이지'),
+        child: Text('보낸 메일이 없습니다.'),
       ),
     );
   }

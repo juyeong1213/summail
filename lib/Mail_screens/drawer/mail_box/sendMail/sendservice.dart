@@ -2,9 +2,8 @@ import 'dart:convert';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:summail/Mail_screens/drawer/mail_box/sendMail/SendMail.dart';
 
-import '../../../send_Mail/send_Mail.dart';
-import '../sendMail.dart';
 
 class SendServices {
   static const String url = 'http://ec2-13-125-246-135.ap-northeast-2.compute.amazonaws.com/api/sent_mail';
