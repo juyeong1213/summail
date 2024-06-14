@@ -1,5 +1,6 @@
 
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:summail/Mail_screens/send_Mail/send_Mail.dart';
 
 import '../drawer/drawer.dart';
@@ -7,7 +8,6 @@ import '../model/mail.dart';
 import '../model/service.dart';
 import '../model/star/favoriteService.dart';
 import 'mailDetailPage.dart';
-
 
 class JsonParse extends StatefulWidget {
   const JsonParse({super.key});
@@ -19,6 +19,7 @@ class JsonParse extends StatefulWidget {
 class _JsonParseState extends State<JsonParse> {
   List<Mail> _mail = <Mail>[];
   bool loading = false;
+  String? savedEmail;
 
   void navigateToPage(BuildContext context, Widget page) {
     Navigator.push(context, MaterialPageRoute(builder: (context) => page));
@@ -26,14 +27,22 @@ class _JsonParseState extends State<JsonParse> {
 
   @override
   void initState() {
-    // TODO: implement initState
     super.initState();
+    _loadSavedEmail(); // 이메일 로드
     Services.getInfo().then((mail) {
       setState(() {
         print('메일 데이터 로드 완료');
         _mail = mail;
         loading = true;
       });
+    });
+  }
+
+  Future<void> _loadSavedEmail() async {
+    final prefs = await SharedPreferences.getInstance();
+    setState(() {
+      savedEmail = prefs.getString('addmail');
+      print('로드된 이메일: $savedEmail'); // 디버깅을 위한 로그 추가
     });
   }
 
@@ -45,8 +54,6 @@ class _JsonParseState extends State<JsonParse> {
       // UI 갱신 로직이 필요한 경우 여기에 추가
     });
   }
-
-
 
   @override
   Widget build(BuildContext context) {
@@ -72,7 +79,7 @@ class _JsonParseState extends State<JsonParse> {
                         mainAxisSize: MainAxisSize.min,
                         children: [
                           Text("보낸 사람 : ${mail.email}"),
-                          Text("받는 사람 : ${mail.email}"),
+                          Text("받는 사람 : ${savedEmail ?? '이메일을 찾을 수 없습니다.'}"),
                           Text("날짜 : ${mail.receiveDate} ${mail.receiveTime}"),
                           TextButton(
                             onPressed: () {
@@ -91,8 +98,8 @@ class _JsonParseState extends State<JsonParse> {
                 color: Colors.blue,
               ),
             ),
-
-            title: Text(mail.email,
+            title: Text(
+              mail.email,
               maxLines: 1,
               overflow: TextOverflow.ellipsis,
               style: TextStyle(
@@ -100,11 +107,11 @@ class _JsonParseState extends State<JsonParse> {
                 fontWeight: FontWeight.bold, // 굵은 글자로 설정
               ),
             ),
-            //subtitle: Text(mail.address.street),
             subtitle: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: <Widget>[
-                Text(mail.subject,
+                Text(
+                  mail.subject,
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,
                   style: TextStyle(
@@ -112,7 +119,8 @@ class _JsonParseState extends State<JsonParse> {
                     fontWeight: FontWeight.bold, // 굵은 글자로 설정
                   ),
                 ),
-                Text(mail.contents,
+                Text(
+                  mail.contents,
                   maxLines: 2,
                   overflow: TextOverflow.ellipsis,
                 ),
@@ -142,7 +150,6 @@ class _JsonParseState extends State<JsonParse> {
                 ),
               ),
             ),
-
             onTap: () {
               Navigator.push(
                 context,
@@ -166,4 +173,3 @@ class _JsonParseState extends State<JsonParse> {
     );
   }
 }
-

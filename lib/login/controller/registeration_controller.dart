@@ -11,7 +11,6 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:http/http.dart' as http;
 
 import '../../utils/api_points.dart';
-import 'login_controller.dart';
 
 
 class RegisterationController extends GetxController{
@@ -25,9 +24,6 @@ class RegisterationController extends GetxController{
     print("회원가입 시작"); // 시작 로그
     try {
       var headers = {'Content-Type': 'application/json'};
-      /*var url = Uri.parse(
-          ApiEndPoints.baseUrl + ApiEndPoints.authEndPoints.registerUrl
-      );*/
       var url = Uri.parse(
           ApiEndPoints.authEndPoints.registerUrl
       );
@@ -44,15 +40,15 @@ class RegisterationController extends GetxController{
 
       if (response.statusCode == 200) {
         print("회원가입 성공");
-        // 회원가입 성공 알림 및 로그인 화면으로 이동
-        nameController.clear();
-        emailController.clear();
-        passwordController.clear();
 
         // SharedPreferences에 이름과 이메일 저장
         final SharedPreferences sharedPreferences = await prefs;
         await sharedPreferences.setString('name', nameController.text);
         await sharedPreferences.setString('email', emailController.text.trim());
+
+        nameController.clear();
+        emailController.clear();
+        passwordController.clear();
 
         Get.snackbar("회원가입 성공", "이제 로그인 할 수 있습니다.");
       } else {

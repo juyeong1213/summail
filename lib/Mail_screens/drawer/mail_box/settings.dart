@@ -1,8 +1,22 @@
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:http/http.dart' as http;
+import 'package:summail/Mail_screens/drawer/mail_box/summarization/SumMailPage.dart';
+
+import '../../../main.dart';
+
+import 'package:flutter/material.dart';
+import 'package:get/get.dart';
+import 'package:http/http.dart' as http;
+import 'package:shared_preferences/shared_preferences.dart';
+import 'dart:convert';
+
+import '../drawer.dart';
+
+
 
 class SettingsPage extends StatefulWidget {
   @override
@@ -43,13 +57,17 @@ class _SettingsPageState extends State<SettingsPage> {
   }
 
   _saveSettingsToServer() async {
+    final prefs = await SharedPreferences.getInstance();
+    final String? token = prefs.getString('token');
+
     final response = await http.post(
-      Uri.parse('서버 url'), // 서버의 URL을 입력합니다.
-      headers: <String, String>{
+      Uri.parse('http://ec2-13-125-246-135.ap-northeast-2.compute.amazonaws.com/api/setting'),
+      headers: {
+        'Authorization': 'Bearer $token',
         'Content-Type': 'application/json; charset=UTF-8',
       },
       body: jsonEncode(<String, dynamic>{
-        'emailLength': emailLength,
+        'emailLength': _convertEmailLengthToNumber(emailLength),
         'summaryTone': summaryTone,
       }),
     );
@@ -63,9 +81,29 @@ class _SettingsPageState extends State<SettingsPage> {
     }
   }
 
+  int _convertEmailLengthToNumber(String length) {
+    switch (length) {
+      case '50 자 이내':
+        return 50;
+      case '100 자 이내':
+        return 100;
+      case '150 자 이내':
+        return 150;
+      default:
+        return 50;
+    }
+  }
+
+  Future<bool> _onWillPop() async {
+    Navigator.pushReplacement(
+      context,
+      MaterialPageRoute(builder: (context) => CustomDrawer()), // CustomDrawer로 이동
+    );
+    return false; // true를 반환하면 현재 페이지가 닫히고, false를 반환하면 현재 페이지가 유지됩니다.
+  }
+
   @override
   Widget build(BuildContext context) {
-    // Widget build 구현은 이전 설명과 동일하지만, DropdownButton을 emailLength를 위해 업데이트해야 합니다.
     return Scaffold(
       appBar: AppBar(
         title: Text('설정'),
@@ -113,7 +151,7 @@ class _SettingsPageState extends State<SettingsPage> {
                   _saveSettingsToServer();
                 });
               },
-              items: <String>['공식적', '친근한']
+              items: <String>['자연스러운', '친근한', '구어체']
                   .map<DropdownMenuItem<String>>((String value) {
                 return DropdownMenuItem<String>(
                   value: value,
@@ -147,4 +185,6 @@ class _SettingsPageState extends State<SettingsPage> {
     );
   }
 }
+
+
 

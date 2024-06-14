@@ -7,25 +7,28 @@ List<MailSum> mailFromJson(String str) => List<MailSum>.from(json.decode(str).ma
 // MailSum 객체 리스트를 JSON 문자열로 인코딩하기 위한 함수
 String mailToJson(List<MailSum> data) => json.encode(List<dynamic>.from(data.map((x) => x.toJson())));
 
-// MailSum 모델 클래스
 class MailSum {
-  final String summary;
+  final String messageId;
+  final String contents;
 
   bool isFavorited;
 
   MailSum({
-    required this.summary,
+    required this.messageId,
+    required this.contents,
     this.isFavorited = false,
   });
 
   factory MailSum.fromJson(Map<String, dynamic> json) {
     return MailSum(
-      summary: json["summary"],
+      messageId: json["messageId"],
+      contents: json["contents"],  // 여기서 'summary'를 'contents'로 변경
     );
   }
 
   Map<String, dynamic> toJson() => {
-    "summary" : summary,
+    "messageId": messageId,
+    "contents" : contents,  // 여기서 'summary'를 'contents'로 변경
   };
 }
 

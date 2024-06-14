@@ -22,29 +22,6 @@ class LoginController extends GetxController {
   final Future<SharedPreferences> prefs = SharedPreferences.getInstance();
 
 
-
-  /*Future<void> callAnotherServer(String token) async {
-    try {
-      final response = await http.get(
-        Uri.parse(
-            'http://ec2-13-125-246-135.ap-northeast-2.compute.amazonaws.com:8080/add/google'),
-        headers: {
-          'Authorization': 'Bearer $token',
-        },
-      );
-
-      if (response.statusCode == 200) {
-        print("다른 서버 호출 성공: 상태 코드 ${response.statusCode}");
-      } else {
-        print("다른 서버 호출 실패: 상태 코드 ${response.statusCode}");
-      }
-    }
-    catch (e) {
-      print("다른 서버 호출 중 예외 발생: $e");
-    }
-  }*/
-
-
   Future<void> loginWithEmail() async {
     print("로그인 시작"); // 시작 로그
     try {
@@ -74,9 +51,6 @@ class LoginController extends GetxController {
 
 
           Get.to(() => AddMail());
-
-          // map 서버 호출해주기
-          //await callAnotherServer(token);
 
           emailController.clear();
           passwordController.clear();

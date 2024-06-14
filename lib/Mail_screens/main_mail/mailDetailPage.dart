@@ -1,9 +1,120 @@
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 import '../model/mail.dart';
 
+class MailDetailPage extends StatefulWidget {
+  final Mail mail;
+
+  const MailDetailPage({Key? key, required this.mail}) : super(key: key);
+
+  @override
+  _MailDetailPageState createState() => _MailDetailPageState();
+}
+
+class _MailDetailPageState extends State<MailDetailPage> {
+  String? savedEmail;
+  bool isLoading = true;
+
+  @override
+  void initState() {
+    super.initState();
+    _loadSavedEmail();
+  }
+
+  Future<void> _loadSavedEmail() async {
+    final prefs = await SharedPreferences.getInstance();
+    setState(() {
+      savedEmail = prefs.getString('addmail');
+      isLoading = false;
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: Text("받은 메일"),
+      ),
+      body: isLoading
+          ? Center(child: CircularProgressIndicator())
+          : Padding(
+        padding: EdgeInsets.all(16.0),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: <Widget>[
+            Text(widget.mail.subject, style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold)),
+            SizedBox(height: 16),
+            Row(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                InkWell(
+                  onTap: () {
+                    showDialog(
+                      context: context,
+                      builder: (context) {
+                        return AlertDialog(
+                          title: Text(widget.mail.name),
+                          content: Column(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              Text("보낸 사람 : ${widget.mail.email}"),
+                              Text("받는 사람 : ${savedEmail ?? '이메일을 찾을 수 없습니다.'}"),
+                              Text("날짜 : ${widget.mail.receiveDate} ${widget.mail.receiveTime}"),
+                              TextButton(
+                                onPressed: () {
+                                  Navigator.pop(context);
+                                },
+                                child: const Text('닫기'),
+                              ),
+                            ],
+                          ),
+                        );
+                      },
+                    );
+                  },
+                  child: const Icon(
+                    Icons.account_circle_rounded,
+                    color: Colors.blue,
+                    size: 60,
+                  ),
+                ),
+                SizedBox(width: 16),
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Row(
+                      children: [
+                        Text(widget.mail.name, style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
+                        SizedBox(width: 8),
+                        Text(
+                          "${widget.mail.receiveTime}",
+                          style: TextStyle(fontSize: 12, color: Colors.black),
+                        ),
+                      ],
+                    ),
+                    SizedBox(height: 4),
+                    Row(
+                      children: [
+                        Text("받는 사람: 나 ${savedEmail ?? '이메일을 찾을 수 없습니다.'}"),
+                        SizedBox(width: 8),
+                      ],
+                    ),
+                  ],
+                ),
+              ],
+            ),
+            SizedBox(height: 16),
+            Text("${widget.mail.contents}", style: TextStyle(fontSize: 20)),
+          ],
+        ),
+      ),
+    );
+  }
+}
+/*
 class MailDetailPage extends StatelessWidget {
   final Mail mail;
 
@@ -90,10 +201,11 @@ class MailDetailPage extends StatelessWidget {
             ),
             SizedBox(height: 16),
             // 사용자의 주소를 표시
-            Text("내용: ${mail.contents}", style: TextStyle(fontSize: 20), ),
+            Text("${mail.contents}", style: TextStyle(fontSize: 20), ),
           ],
         ),
       ),
     );
   }
 }
+*/

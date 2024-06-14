@@ -5,6 +5,8 @@ class SendMailPage extends StatefulWidget {
 
   @override
   State<SendMailPage> createState() => _SendMailPageState();
+
+  static fromJson(Map<String, dynamic> jsonItem) {}
 }
 
 class _SendMailPageState extends State<SendMailPage> {

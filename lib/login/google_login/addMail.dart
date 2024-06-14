@@ -151,6 +151,7 @@ Page resource error:
       final prefs = await SharedPreferences.getInstance();
       await prefs.setString('access_token', accessToken);
       await prefs.setString('addmail', email);
+      debugPrint('저장된 이메일: $email');
 
       print('액세스 토큰과 추가된 이메일을 SharedPreferences에 저장했습니다.');
 

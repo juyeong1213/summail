@@ -1,22 +1,21 @@
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:summail/Mail_screens/drawer/mail_box/sendMail/sendservice.dart';
 
-import '../../main_mail/mailDetailPage.dart';
-import '../../model/mail.dart';
-import '../../model/service.dart';
-import '../../model/star/favoriteService.dart';
-import '../../send_Mail/send_Mail.dart';
+import '../../../model/star/favoriteService.dart';
+import '../../../send_Mail/send_Mail.dart';
 
 
-class ReceicedMailPage extends StatefulWidget {
-  const ReceicedMailPage({super.key});
+
+class SendMailPage extends StatefulWidget {
+  const SendMailPage({super.key});
 
   @override
-  State<ReceicedMailPage> createState() => _ReceicedMailPageState();
+  State<SendMailPage> createState() => _SendMailPageState();
 }
 
-class _ReceicedMailPageState extends State<ReceicedMailPage> {
-  List<Mail> _mail = <Mail>[];
+class _SendMailPageState extends State<SendMailPage> {
+  List<SendMail> _mail = <SendMail>[];
   bool loading = false;
   String? savedEmail;
 
@@ -28,7 +27,7 @@ class _ReceicedMailPageState extends State<ReceicedMailPage> {
   void initState() {
     super.initState();
     _loadSavedEmail(); // 이메일 로드
-    Services.getInfo().then((mail) {
+    SendServices.fetchSendMails().then((mail) {
       setState(() {
         print('메일 데이터 로드 완료');
         _mail = mail;
@@ -45,10 +44,10 @@ class _ReceicedMailPageState extends State<ReceicedMailPage> {
     });
   }
 
-  Future<void> toggleFavoriteStatus(int mailId) async {
-    bool currentStatus = await FavoriteService.getFavoriteStatus(mailId); // 비동기 호출에 await 추가
+  Future<void> toggleFavoriteStatus(String messageId) async {
+    bool currentStatus = await FavoriteService.getFavoriteStatus(messageId); // 비동기 호출에 await 추가
     bool newStatus = !currentStatus;
-    await FavoriteService.toggleFavoriteStatus(mailId, newStatus); // 비동기 호출에 await 추가
+    await FavoriteService.toggleFavoriteStatus(messageId, newStatus); // 비동기 호출에 await 추가
     setState(() {
       // UI 갱신 로직이 필요한 경우 여기에 추가
     });
@@ -59,12 +58,12 @@ class _ReceicedMailPageState extends State<ReceicedMailPage> {
     print('build 호출됨');
     return Scaffold(
       appBar: AppBar(
-        title: Text(loading ? '받은 메일함' : 'Loading...'),
+        title: Text(loading ? '보낸 메일함' : 'Loading...'),
       ),
       body: ListView.builder(
         itemCount: _mail.length,
         itemBuilder: (context, index) {
-          Mail mail = _mail[index];
+          SendMail mail = _mail[index];
           return ListTile(
             leading: InkWell(
               onTap: () {
@@ -72,13 +71,13 @@ class _ReceicedMailPageState extends State<ReceicedMailPage> {
                   context: context,
                   builder: (context) {
                     return AlertDialog(
-                      title: Text(mail.name),
+                      title: Text(mail.sender),
                       content: Column(
                         mainAxisSize: MainAxisSize.min,
                         children: [
-                          Text("보낸 사람 : ${mail.email}"),
+                          Text("보낸 사람 : ${mail.sender}"),
                           Text("받는 사람 : ${savedEmail ?? '이메일을 찾을 수 없습니다.'}"),
-                          Text("날짜 : ${mail.receiveDate} ${mail.receiveTime}"),
+                          Text("날짜 : ${mail.sender} ${mail.sender}"),
                           TextButton(
                             onPressed: () {
                               Navigator.pop(context); // 대화 상자를 닫습니다.
@@ -97,7 +96,7 @@ class _ReceicedMailPageState extends State<ReceicedMailPage> {
               ),
             ),
             title: Text(
-              mail.email,
+              mail.sender,
               maxLines: 1,
               overflow: TextOverflow.ellipsis,
               style: TextStyle(
@@ -118,18 +117,18 @@ class _ReceicedMailPageState extends State<ReceicedMailPage> {
                   ),
                 ),
                 Text(
-                  mail.contents,
+                  mail.snippet,
                   maxLines: 2,
                   overflow: TextOverflow.ellipsis,
                 ),
               ],
             ),
             trailing: InkWell(
-              onTap: () => toggleFavoriteStatus(mail.id),
+              onTap: () => toggleFavoriteStatus(mail.messageId),
               child: Padding(
                 padding: const EdgeInsets.all(8.0),
                 child: FutureBuilder<bool>(
-                  future: FavoriteService.getFavoriteStatus(mail.id), // 비동기 메서드 호출
+                  future: FavoriteService.getFavoriteStatus(mail.messageId), // 비동기 메서드 호출
                   builder: (BuildContext context, AsyncSnapshot<bool> snapshot) {
                     Color iconColor = Colors.grey; // 기본 색상은 회색
                     if (snapshot.connectionState == ConnectionState.done) {
@@ -151,22 +150,11 @@ class _ReceicedMailPageState extends State<ReceicedMailPage> {
             onTap: () {
               Navigator.push(
                 context,
-                MaterialPageRoute(builder: (context) => MailDetailPage(mail: mail)),
+                MaterialPageRoute(builder: (context) => SendMailDetailPage(mail: mail)),
               );
             },
           );
         },
-      ),
-      floatingActionButton: Container(
-        margin: EdgeInsets.only(bottom: 30, right: 30),
-        child: FloatingActionButton(
-          onPressed: () {
-            // 메일 작성 페이지로 이동하는 로직
-            navigateToPage(context, SendMail()); // 예시 페이지
-          },
-          child: Icon(Icons.add),
-          backgroundColor: Colors.white54,
-        ),
       ),
     );
   }

@@ -44,7 +44,7 @@ class Mail {
 
     return Mail(
       id: json["id"],
-      messageId: json["messageId"],
+      messageId: json["messageId"].toString(),
       name: name,
       email: email,
       subject: json["subject"],
